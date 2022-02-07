@@ -13,12 +13,20 @@ steps:
 - task: Docker@2
   displayName: Build algod
   inputs:
-    command: build
+    command: buildAndPush
     buildContext: algod
     Dockerfile: algod/Dockerfile
+    repository: makerxau/algorand-sandbox-dev
+    containerRegistry: "MakerX Docker Hub"
+    tags: |
+      latest
 - task: Docker@2
   displayName: Build indexer
   inputs:
-    command: build
+    command: buildAndPush
     buildContext: indexer
     Dockerfile: indexer/Dockerfile
+    repository: makerxau/algorand-indexer-dev
+    containerRegistry: "MakerX Docker Hub"
+    tags: |
+      latest
