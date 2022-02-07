@@ -15,13 +15,20 @@ ARG URL="https://github.com/algorand/go-algorand"
 ARG BRANCH="master"
 ARG SHA=
 
-COPY ["install.sh", "reach2.patch", "/tmp/"]
+RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /tmp/go-algorand
+WORKDIR /tmp/go-algorand
+RUN ./scripts/configure_dev.sh
+COPY ["reach2.patch", "./"]
+RUN patch -p1 < reach2.patch
+RUN make build
+RUN ./scripts/dev_install.sh -p ${BIN_DIR} 
+RUN $BIN_DIR/algod -v
 
-RUN /tmp/install.sh \
-    -d "${BIN_DIR}" \
-    -u "${URL}" \
-    -b "${BRANCH}" \
-    -s "${SHA}"
+# RUN /tmp/install.sh \
+#     -d "${BIN_DIR}" \
+#     -u "${URL}" \
+#     -b "${BRANCH}" \
+#     -s "${SHA}"
 
 # Configure network
 ARG ALGOD_PORT="4001"
