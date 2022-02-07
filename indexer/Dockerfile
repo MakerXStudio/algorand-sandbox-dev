@@ -1,5 +1,5 @@
 ARG GO_VERSION=1.17.5
-FROM golang:$GO_VERSION-alpine
+FROM golang:$GO_VERSION-alpine as build
 
 ENV HOME /opt/indexer
 WORKDIR /opt/indexer
@@ -14,7 +14,15 @@ ARG BRANCH="develop"
 
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /opt/indexer
-RUN make && cp cmd/algorand-indexer/algorand-indexer /tmp
+RUN make
+
+FROM golang:$GO_VERSION-alpine
+
+# install runtime dependencies
+ENV DEBIAN_FRONTEND noninteractive
+RUN apk add --no-cache bash libstdc++
+# copy build results
+COPY --from=build /opt/indexer/cmd/algorand-indexer/algorand-indexer /tmp/
 
 COPY ["start.sh", "/tmp/"]
 CMD ["/tmp/start.sh"]
