@@ -24,12 +24,6 @@ RUN make build
 RUN ./scripts/dev_install.sh -p ${BIN_DIR} 
 RUN $BIN_DIR/algod -v
 
-# RUN /tmp/install.sh \
-#     -d "${BIN_DIR}" \
-#     -u "${URL}" \
-#     -b "${BRANCH}" \
-#     -s "${SHA}"
-
 # Configure network
 ARG ALGOD_PORT="4001"
 ARG KMD_PORT="4002"
