@@ -2,18 +2,17 @@ ARG GO_VERSION=1.17.5
 FROM golang:$GO_VERSION
 
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
+ENV HOME /opt
 ENV BIN_DIR="$HOME/node"
 ENV ALGORAND_DATA="/opt/data"
 
 # Basic dependencies.
-ENV HOME /opt
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y apt-utils curl git git-core bsdmainutils python3 patch
 
 # Install algod binaries.
 ARG URL="https://github.com/algorand/go-algorand"
 ARG BRANCH="master"
-ARG SHA=
 
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /tmp/go-algorand
 WORKDIR /tmp/go-algorand
