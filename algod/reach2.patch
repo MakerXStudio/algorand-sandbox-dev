@@ -1,0 +1,17 @@
+Index: daemon/algod/api/server/v2/handlers.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/daemon/algod/api/server/v2/handlers.go b/daemon/algod/api/server/v2/handlers.go
+--- a/daemon/algod/api/server/v2/handlers.go	(revision 0d65a0f93f214087569939ad2cea0c0f1b15d8d8)
++++ b/daemon/algod/api/server/v2/handlers.go	(revision f92f73fa12560202110ab456889f2703c4d6261e)
+@@ -492,7 +492,7 @@
+ 	case <-v2.Shutdown:
+ 		return internalError(ctx, err, errServiceShuttingDown, v2.Log)
+ 	case <-time.After(1 * time.Minute):
+-	case <-ledger.Wait(basics.Round(round + 1)):
++	case <-ledger.Wait(basics.Round(round)):
+ 	}
+ 
+ 	// Return status after the wait
