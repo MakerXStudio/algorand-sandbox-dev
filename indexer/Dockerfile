@@ -1,6 +1,5 @@
-ARG ARCH=
 ARG GO_VERSION=1.17.5
-FROM ${ARCH}golang:$GO_VERSION-alpine as build
+FROM golang:$GO_VERSION-alpine as build
 
 ENV HOME /opt/indexer
 WORKDIR /opt/indexer
@@ -16,7 +15,7 @@ RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /opt/indexer
 RUN make
 
-FROM ${ARCH}alpine:latest
+FROM alpine:latest
 
 # install runtime dependencies
 RUN apk add --no-cache bash libstdc++

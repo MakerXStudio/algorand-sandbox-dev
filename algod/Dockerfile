@@ -1,6 +1,5 @@
-ARG ARCH=
 ARG GO_VERSION=1.17.5
-FROM ${ARCH}golang:$GO_VERSION
+FROM golang:$GO_VERSION
 
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 ENV HOME /opt

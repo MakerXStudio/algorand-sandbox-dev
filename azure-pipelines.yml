@@ -5,52 +5,28 @@ jobs:
 - job: DockerBuildAndPush
   strategy:
     matrix:
-      algod_AMD64:
-        ARCH: 'amd64'
-        PLATFORM: 'linux/amd64'
+      algod:
         BUILD_DIR: 'algod'
         DOCKER_REPO: 'makerxau/algorand-sandbox-dev'
-      algod_ARMv8:
-        ARCH: 'arm64v8'
-        PLATFORM: 'linux/arm64/v8'
-        BUILD_DIR: 'algod'
-        DOCKER_REPO: 'makerxau/algorand-sandbox-dev'
-      indexer_AMD64:
-        ARCH: 'amd64'
-        PLATFORM: 'linux/amd64'
+      indexer:
         BUILD_DIR: 'indexer'
         DOCKER_REPO: 'makerxau/algorand-indexer-dev'
-      indexer_ARMv8:
-        ARCH: 'arm64v8'
-        PLATFORM: 'linux/arm64/v8'
-        BUILD_DIR: 'indexer'
-        DOCKER_REPO: 'makerxau/algorand-indexer-dev'
-    maxParallel: 4
+    maxParallel: 2
   pool:
     vmImage: ubuntu-latest
   steps:
+  - task: Docker@2
+    displayName: DockerHub Login
+    inputs:
+      command: login
+      containerRegistry: "MakerX Docker Hub"    
   - script: |
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    # see: https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops#how-to-build-linux-container-images-for-architectures-other-than-x64
-    # see: https://github.com/multiarch/qemu-user-static#getting-started
-    displayName: Prepare binfmt_misc
+      docker buildx create --use
+      docker buildx build --platform linux/amd64,linux/arm64 -t $(DOCKER_REPO):latest --push $(BUILD_DIR)
+    displayName: Build and Push
   - task: Docker@2
-    displayName: Build
+    displayName: DockerHub Logout
     inputs:
-      command: build
-      containerRegistry: "MakerX Docker Hub"    
-      repository: $(DOCKER_REPO)
-      buildContext: $(BUILD_DIR)
-      Dockerfile: $(BUILD_DIR)/Dockerfile
-      tags: |
-        latest
-      arguments: '--build-arg ARCH=$(ARCH)/ --platform $(PLATFORM)'  
-      addPipelineData: false
-  - task: Docker@2
-    displayName: Push
-    inputs:
-      command: push
+      command: logout
       containerRegistry: "MakerX Docker Hub"
-      repository: $(DOCKER_REPO)
-      tags: |
-        latest
