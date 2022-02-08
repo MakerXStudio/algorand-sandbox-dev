@@ -48,6 +48,11 @@ RUN /tmp/setup.py \
 
 FROM debian:bullseye-slim
 
+ENV HOME="/opt/algorand"
+ENV BIN_DIR="$HOME/node"
+ENV ALGORAND_DATA="$HOME/node/data"
+ENV PATH="$BIN_DIR:${PATH}"
+
 COPY --from=build /opt/algorand /opt/algorand
 
 # Start algod
