@@ -1,32 +1,56 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- task: Docker@2
-  displayName: Build algod
-  inputs:
-    command: buildAndPush
-    buildContext: algod
-    Dockerfile: algod/Dockerfile
-    repository: makerxau/algorand-sandbox-dev
-    containerRegistry: "MakerX Docker Hub"
-    tags: |
-      latest
-- task: Docker@2
-  displayName: Build indexer
-  inputs:
-    command: buildAndPush
-    buildContext: indexer
-    Dockerfile: indexer/Dockerfile
-    repository: makerxau/algorand-indexer-dev
-    containerRegistry: "MakerX Docker Hub"
-    tags: |
-      latest
+jobs:
+- job: DockerBuildAndPush
+  strategy:
+    matrix:
+      algod_AMD64:
+        ARCH: 'amd64'
+        PLATFORM: 'linux/amd64'
+        BUILD_DIR: 'algod'
+        DOCKER_REPO: 'makerxau/algorand-sandbox-dev'
+      algod_ARMv8:
+        ARCH: 'arm64v8'
+        PLATFORM: 'linux/arm64/v8'
+        BUILD_DIR: 'algod'
+        DOCKER_REPO: 'makerxau/algorand-sandbox-dev'
+      indexer_AMD64:
+        ARCH: 'amd64'
+        PLATFORM: 'linux/amd64'
+        BUILD_DIR: 'indexer'
+        DOCKER_REPO: 'makerxau/algorand-indexer-dev'
+      indexer_ARMv8:
+        ARCH: 'arm64v8'
+        PLATFORM: 'linux/arm64/v8'
+        BUILD_DIR: 'indexer'
+        DOCKER_REPO: 'makerxau/algorand-indexer-dev'
+    maxParallel: 4
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - script: |
+      docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    # see: https://docs.microsoft.com/en-us/azure/devops/pipelines/ecosystems/containers/build-image?view=azure-devops#how-to-build-linux-container-images-for-architectures-other-than-x64
+    # see: https://github.com/multiarch/qemu-user-static#getting-started
+    displayName: Prepare binfmt_misc
+  - task: Docker@2
+    displayName: Build
+    inputs:
+      command: build
+      containerRegistry: "MakerX Docker Hub"    
+      repository: $(DOCKER_REPO)
+      buildContext: $(BUILD_DIR)
+      Dockerfile: $(BUILD_DIR)/Dockerfile
+      tags: |
+        latest
+      arguments: '--build-arg ARCH=$(ARCH)/ --platform $(PLATFORM)'  
+      addPipelineData: false
+  - task: Docker@2
+    displayName: Push
+    inputs:
+      command: push
+      containerRegistry: "MakerX Docker Hub"
+      repository: $(DOCKER_REPO)
+      tags: |
+        latest
