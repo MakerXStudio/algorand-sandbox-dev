@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# COPIED FROM https://github.com/algorand/sandbox/blob/dd9aba5f74c8d26d23389f8a61292e24e30d637d/images/algod/setup.py
+
 # Script to help configure and run different algorand configurations.
 # Notably this script can configure an algorand installation to run as a
 # private network, or as a node connected to a long-running network.

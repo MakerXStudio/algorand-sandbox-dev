@@ -5,14 +5,16 @@ ENV HOME /opt/indexer
 WORKDIR /opt/indexer
 
 # Basic dependencies.
-RUN apk add --no-cache git bzip2 make bash libtool boost-dev autoconf automake g++
+RUN apk add --no-cache git bzip2 make bash libtool boost-dev autoconf automake g++ patch
 
 # Install indexer binaries.
 ARG URL="https://github.com/algorand/indexer"
-ARG BRANCH="develop"
+ARG BRANCH="master"
 
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /opt/indexer
+COPY ["fastFollowLoop.patch", "./"]
+RUN patch -p1 < fastFollowLoop.patch
 RUN make
 
 FROM alpine:latest

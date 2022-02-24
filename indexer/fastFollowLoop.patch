@@ -1,0 +1,17 @@
+Index: fetcher/fetcher.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/fetcher/fetcher.go b/fetcher/fetcher.go
+--- a/fetcher/fetcher.go	(revision 4997285179bb1559112c61dbe15ea479176b2c4a)
++++ b/fetcher/fetcher.go	(date 1645693170829)
+@@ -140,7 +140,7 @@
+ 	aclient := bot.Algod()
+ 	for {
+ 		for retries := 0; retries < 3; retries++ {
+-			_, err = aclient.StatusAfterBlock(bot.nextRound).Do(ctx)
++			_, err = aclient.StatusAfterBlock(bot.nextRound - 1).Do(ctx)
+ 			if err != nil {
+ 				// If context has expired.
+ 				if ctx.Err() != nil {

@@ -8,23 +8,21 @@ ENV PATH="$BIN_DIR:${PATH}"
 
 # Basic dependencies.
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y apt-utils curl git git-core bsdmainutils python3 patch
+# dependencies = patch + those listed here: https://github.com/algorand/go-algorand/blob/rel/stable/scripts/install_linux_deps.sh#L17
+# Note that those get installed through configure_dev.sh anyway, but if we're rebuilding locally - for example to test out
+# different branches -  it's faster to have them installed here and be cached
+RUN apt-get update && apt-get install -y patch libtool libboost-math-dev expect jq autoconf shellcheck sqlite3 python3-venv
 
 # Install algod binaries.
 ARG URL="https://github.com/algorand/go-algorand"
-ARG BRANCH="master"
+ARG BRANCH="rel/stable"
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /src
 WORKDIR /src
 RUN ./scripts/configure_dev.sh
-COPY ["reach2.patch", "./"]
-RUN patch -p1 < reach2.patch
 RUN make build
 RUN ./scripts/dev_install.sh -p ${BIN_DIR} 
-WORKDIR $HOME
-RUN rm -rf /src
-RUN algod -v
 
 # Configure network
 ARG ALGOD_PORT="4001"
