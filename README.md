@@ -1,6 +1,7 @@
 # algorand-sandbox-dev
 
-This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves the following problems which relate to local development and/or CI/CD.
+This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some 
+performance problems which impact local development and CI/CD usage.
 
 ## How to use
 
