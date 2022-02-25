@@ -1,10 +1,15 @@
 trigger:
-- main
-
-pr:
   branches:
-    exclude:
-      - '*'
+    include:
+      - main
+  paths:
+    include:
+      - algod/
+      - indexer/
+      - azure-pipelines.yml
+
+# no PR triggers
+pr: none
 
 jobs:
 - job: DockerBuildAndPush
