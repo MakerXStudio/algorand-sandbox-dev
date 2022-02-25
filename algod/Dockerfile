@@ -18,12 +18,11 @@ WORKDIR /src
 RUN ./scripts/configure_dev.sh
 RUN make build
 
-ENV HOME="/opt/algorand"
-ENV BIN_DIR="$HOME/bin"
-ENV NETWORK_DIR="$HOME/testnetwork"
+ENV BASE_DIR="/opt/algorand"
+ENV BIN_DIR="$BASE_DIR/bin"
 ENV PATH="$BIN_DIR:${PATH}"
 
-RUN ./scripts/dev_install.sh -p ${BIN_DIR} 
+RUN ./scripts/dev_install.sh -p ${BIN_DIR}
 
 # Configure network
 ARG ALGOD_PORT="4001"
@@ -31,12 +30,12 @@ ARG KMD_PORT="4002"
 ARG TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ARG TEMPLATE="DevModeNetwork.json"
 
-WORKDIR $HOME
-COPY ["$TEMPLATE", "./"]
+COPY ["$TEMPLATE", "${BASE_DIR}/"]
 
+ENV NETWORK_DIR="$BASE_DIR/testnetwork"
 ENV NODE_DIR="${NETWORK_DIR}/Node"
 ENV KMD_DATA="${NODE_DIR}/kmd-v0.5"
-RUN goal network create -n sandnet -r "${NETWORK_DIR}" -t "./${TEMPLATE}"
+RUN goal network create -n sandnet -r "${NETWORK_DIR}" -t "${BASE_DIR}/${TEMPLATE}"
 RUN echo $TOKEN > "${NODE_DIR}/algod.token"
 RUN echo $TOKEN > "${KMD_DATA}/kmd.token"
 RUN echo "{ \"Version\": 12, \"GossipFanout\": 1, \"EndpointAddress\": \"0.0.0.0:${ALGOD_PORT}\", \"DNSBootstrapID\": \"\", \"IncomingConnectionsLimit\": 0, \"Archival\":false, \"isIndexerActive\":false, \"EnableDeveloperAPI\":true}" > "${NODE_DIR}/config.json"
@@ -48,8 +47,7 @@ RUN chmod +x "${BIN_DIR}/start.sh"
 
 FROM debian:bullseye-slim
 
-ENV HOME="/opt/algorand" \
-    PATH="/opt/algorand/bin:${PATH}" \
+ENV PATH="/opt/algorand/bin:${PATH}" \
     ALGORAND_DATA="/opt/algorand/testnetwork/Node" \
     KMD_DATA="/opt/algorand/testnetwork/Node/kmd-v0.5"
 
