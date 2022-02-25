@@ -24,5 +24,15 @@ RUN apk add --no-cache bash libstdc++
 # copy build results
 COPY --from=build /opt/indexer/cmd/algorand-indexer/algorand-indexer /tmp/
 
+ARG INDEXER_PORT="8980"
+ARG ALGOD_PORT="4001"
+ARG TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+ENV INDEXER_PORT=${INDEXER_PORT} \
+    ALGOD_PORT=${ALGOD_PORT} \
+    ALGOD_TOKEN=${TOKEN}
+
+EXPOSE $INDEXER_PORT
+
 COPY ["start.sh", "/tmp/"]
 CMD ["/tmp/start.sh"]

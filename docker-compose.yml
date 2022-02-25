@@ -5,22 +5,24 @@ services:
     container_name: "algorand-sandbox-algod"
     build:
       context: ./algod
+      args:
+        BRANCH: "rel/stable"
     ports:
-      - 4001:4001
-      - 4002:4002
-      - 9392:9392
+      - "4001:4001"
+      - "4002:4002"
+      - "9392:9392"
 
   indexer:
     container_name: "algorand-sandbox-indexer"
     build:
       context: ./indexer
+      args:
+        BRANCH: "master"
     ports:
-      - 8980:8980
+      - "8980:8980"
     restart: unless-stopped
     environment:
-      PORT: "8980"
-      ALGOD_ADDR: "algod:4001"
-      ALGOD_TOKEN: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"      
+      ALGOD_HOST: "algod"
       POSTGRES_HOST: "indexer-db"
       POSTGRES_PORT: "5432"
       POSTGRES_USER: algorand
@@ -34,7 +36,7 @@ services:
     image: "postgres:13-alpine"
     container_name: "algorand-sandbox-postgres"
     ports:
-      - 5433:5432
+      - "5433:5432"
     user: postgres
     environment:
       POSTGRES_USER: algorand
