@@ -2,15 +2,15 @@
 
 ## Overview
 
-This repo is loosely based on [Alogrand's official sandbox](https://github.com/algorand/sandbox), but solves the following problems which relate to local development and/or CI/CD.
+This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves the following problems which relate to local development and/or CI/CD.
 
 ### 1. DevMode and indexer do not play nicely together
-Even though Alogrand rounds take only a few seconds in normal operations to commit, 
+Even though Algorand rounds take only a few seconds in normal operations to commit, 
 this is too slow for unit testing purposes. Running a local Algorand node (e.g. through ) 
 in `DevMode` solves the problem, as outlined [by this comment from go-algorand source code](https://github.com/algorand/go-algorand/blob/d2289a52d517b1e7e0a23b6936305520895d36d5/data/bookkeeping/genesis.go#L78) :
 
     DevMode defines whether this network operates in a developer mode or not. Developer mode networks
-	are a single node network, that operates without the agreement service being active. In liue of the
+	are a single node network, that operates without the agreement service being active. In lieu of the
 	agreement service, a new block is generated each time a node receives a transaction group.
 
 However, currently the `indexer` daemon is unaware of this - regardless of `DevMode` being specified as part of the network genesis 
@@ -64,7 +64,6 @@ This means the indexer is only waiting for the current block to be committed, no
 
 ### 2. Executing docker builds as part of CI/CD is slow
 - building & pushing multi-arch builds to dockerhub
-- 
 
 ### 3. Other minor issues fixed
 - indexer daemon needs to wait for postgres startup on init
