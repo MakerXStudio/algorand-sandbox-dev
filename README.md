@@ -52,7 +52,7 @@ services:
       POSTGRES_DB: indexer_db
 ```
 
-Then run `docker compose up` in the directory of your compose file will pull the pre-built images down from DockerHub.
+Then run `docker compose up` in the directory of your compose file. This will pull the pre-built images down from DockerHub.
 
 Currently, the only tags being pushed are `latest`, which are manually triggered builds based on the latest stable 
 releases of both [go-algorand](https://github.com/algorand/go-algorand/) and [indexer](https://github.com/algorand/indexer).
@@ -147,7 +147,7 @@ unexpected behaviour - this won't be an issue running with our pre-built images 
 to run in `DevMode`. 
 
 ### 2. Executing docker builds as part of CI/CD is slow
-Build the official algorand sandbox as part of CI/CD takes quite some time, so we do this as part of a separate pipeline
+Building the official algorand sandbox as part of CI/CD takes quite some time, so we do this as part of a separate pipeline
 (see `azure-pipelines.yml` in this repo for the configuration), and push the results to DockerHub. As outlined above, 
 we've also made these builds public, which saves time locally when updating to new versions.
 
