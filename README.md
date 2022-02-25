@@ -6,7 +6,7 @@ performance problems which impact local development and CI/CD usage.
 ## How to use
 
 You'll need [Docker installed](https://docs.docker.com/get-docker/). The following examples also use `docker compose`,
-which ships with Docker Desktop on Windows and macOS - for Linux users, see the [installation instructions]((https://docs.docker.com/compose/install/)). 
+which ships with Docker Desktop on Windows and macOS - for Linux users, see the [installation instructions](https://docs.docker.com/compose/install/). 
 
 ### Option A: With pre-built images from DockerHub
 
