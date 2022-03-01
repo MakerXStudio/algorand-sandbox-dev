@@ -1,12 +1,14 @@
 # algorand-sandbox-dev
 
-This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some 
-performance problems which impact local development and CI/CD usage.
+This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some performance problems which impact local development and CI/CD usage.
+
+This project was developed by [MakerX](https://makerx.com.au/) to help us with our initiatives, but we are happily providing it for the Algorand community to use as Open Source.
+
+[![MakerX logo](logo.png)](https://makerx.com.au/)
 
 ## How to use
 
-You'll need [Docker installed](https://docs.docker.com/get-docker/). The following examples also use `docker compose`,
-which ships with Docker Desktop on Windows and macOS - for Linux users, see the [installation instructions](https://docs.docker.com/compose/install/). 
+You'll need [Docker installed](https://docs.docker.com/get-docker/). The following examples also use `docker compose`, which ships with Docker Desktop on Windows and macOS - for Linux users, see the [installation instructions](https://docs.docker.com/compose/install/).
 
 ### Option A: With pre-built images from DockerHub
 
