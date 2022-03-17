@@ -103,7 +103,7 @@ In order to reset the environment, copy [reset.ps1](./reset.ps1) into your proje
 
 ### Goal
 
-In order to run a goal command against your algod instance, copy [reset.ps1](./reset.ps1) into your project wherever you put your `docker-compose.yml` file and execute it via `./goal.ps1 {command}` e.g. `./goal.ps1 account list`.
+In order to run a [goal](https://developer.algorand.org/docs/clis/goal/goal/) command against your algod instance, copy [goal.ps1](./goal.ps1) into your project wherever you put your `docker-compose.yml` file and execute it via `./goal.ps1 {command}` e.g. `./goal.ps1 account list`.
 
 ## Getting access to the private key of the faucet account
 
@@ -111,10 +111,12 @@ If you want to use the sandbox then you need to get the private key of the initi
 
 ### Option 1: Manually via goal
 
-> ./goal.ps1 account list
-> ./goal.ps1 account export -a {address_from_online_account_from_above_command}
+```
+./goal.ps1 account list
+./goal.ps1 account export -a {address_from_online_account_from_above_command}
+```
 
-### Option 2: Autoamtically vis kmd API
+### Option 2: Autoamtically via kmd API
 
 Needing to do this manual step every time you spin up a new development environment or reset your Sandbox is frustrating. Instead, it's useful to have code that uses the Sandbox APIs to automatically retrieve the private key of the default account. The following `getSandboxDefaultAccount` function (in TypeScript, but equivalent will work with algosdk in other languages) will help you achieve that:
 
@@ -188,8 +190,6 @@ export function getKmdClient(): Kmd {
   // We can only use Kmd on the Sandbox otherwise it's not exposed so this makes some assumptions (e.g. same token and server as algod and port 4002)
   return new Kmd(process.env.ALGOD_TOKEN!, process.env.ALGOD_SERVER!, '4002')
 }
-
-
 ```
 
 ## Motivation
