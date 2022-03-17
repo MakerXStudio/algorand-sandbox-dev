@@ -1,6 +1,12 @@
 # algorand-sandbox-dev
 
-This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some performance problems which impact local development and CI/CD usage.
+This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some performance and experience problems which impact local development and CI/CD usage.
+
+The key problems we resolve are:
+
+* Long build times for CI/CD
+* Slow devnet + indexer performance
+* Ability to use cross-platform (e.g. on Windows)
 
 This project was developed by [MakerX](https://makerx.com.au/) to help us with our initiatives, but we are happily providing it for the Algorand community to use as Open Source.
 
@@ -82,6 +88,109 @@ of their respective repos get checked out and built.
 
 Also, be careful of the `indexer-db` container persisting after a rebuild, as noted above in Option A, this is even 
 more important if you're building/re-building locally.
+
+## Replicating sandbox.sh functionality
+
+There are a number of things that you can do with `sandbox.sh` within the [Algorand Sandbox](https://github.com/algorand/sandbox#algorand-sandbox) that we have created cross-platform equivalents of using [PowerShell Core](https://docs.microsoft.com/en-us/powershell/scripting/overview?view=powershell-7.2).
+
+### Status
+
+In order to check the status of the running environment, copy [status.ps1](./status.ps1) into your project wherever you put your `docker-compose.yml` file and execute it via `./status.ps1`.
+
+### Reset
+
+In order to reset the environment, copy [reset.ps1](./reset.ps1) into your project wherever you put your `docker-compose.yml` file and execute it via `./reset.ps1`.
+
+### Goal
+
+In order to run a goal command against your algod instance, copy [reset.ps1](./reset.ps1) into your project wherever you put your `docker-compose.yml` file and execute it via `./goal.ps1 {command}` e.g. `./goal.ps1 account list`.
+
+## Getting access to the private key of the faucet account
+
+If you want to use the sandbox then you need to get the private key of the initial wallet so you can transfer ALGOs out of it to other accounts you create. There are two ways to do this:
+
+### Option 1: Manually via goal
+
+> ./goal.ps1 account list
+> ./goal.ps1 account export -a {address_from_online_account_from_above_command}
+
+### Option 2: Autoamtically vis kmd API
+
+Needing to do this manual step every time you spin up a new development environment or reset your Sandbox is frustrating. Instead, it's useful to have code that uses the Sandbox APIs to automatically retrieve the private key of the default account. The following `getSandboxDefaultAccount` function (in TypeScript, but equivalent will work with algosdk in other languages) will help you achieve that:
+
+```typescript
+// account.ts
+import algosdk, { Account, Algodv2 } from 'algosdk'
+import { getKmdClient } from './client'
+
+export async function isSandbox(client: Algodv2): Promise<boolean> {
+  const params = await client.getTransactionParams().do()
+
+  return params.genesisID === 'devnet-v1' || params.genesisID === 'sandnet-v1'
+}
+
+export async function isReachSandbox(client: Algodv2): Promise<boolean> {
+  const params = await client.getTransactionParams().do()
+
+  return params.genesisHash === 'lgTq/JY/RNfiTJ6ZcZ/Er8uR775Hk76c7MvHVWjvjCA='
+}
+
+export function getAccountFromMnemonic(mnemonic: string): Account {
+  return algosdk.mnemonicToSecretKey(mnemonic)
+}
+
+export async function getSandboxDefaultAccount(client: Algodv2): Promise<Account> {
+  if (!(await isSandbox(client))) {
+    throw "Can't get default account from non Sandbox network"
+  }
+
+  if (await isReachSandbox(client)) {
+    // https://github.com/reach-sh/reach-lang/blob/master/scripts/devnet-algo/algorand_network/FAUCET.mnemonic
+    return getAccountFromMnemonic(
+      'frown slush talent visual weather bounce evil teach tower view fossil trip sauce express moment sea garbage pave monkey exercise soap lawn army above dynamic'
+    )
+  }
+
+  const kmd = getKmdClient()
+  const wallets = await kmd.listWallets()
+
+  // Sandbox starts with a single wallet called 'unencrypted-default-wallet', with heaps of tokens
+  const defaultWalletId = wallets.wallets.filter((w: any) => w.name === 'unencrypted-default-wallet')[0].id
+
+  const defaultWalletHandle = (await kmd.initWalletHandle(defaultWalletId, '')).wallet_handle_token
+  const defaultKeyIds = (await kmd.listKeys(defaultWalletHandle)).addresses
+
+  // When you create accounts using goal they get added to this wallet so check for an account that's actually a default account
+  let i = 0
+  for (i = 0; i < defaultKeyIds.length; i++) {
+    const key = defaultKeyIds[i]
+    const account = await client.accountInformation(key).do()
+    if (account.status !== 'Offline' && account.amount > 1000_000_000) {
+      break
+    }
+  }
+
+  const defaultAccountKey = (await kmd.exportKey(defaultWalletHandle, '', defaultKeyIds[i])).private_key
+
+  const defaultAccountMnemonic = algosdk.secretKeyToMnemonic(defaultAccountKey)
+  return getAccountFromMnemonic(defaultAccountMnemonic)
+}
+```
+
+To get the `Kmd` instance you can use something like this (tweak it based on where you retrieve your ALGOD token and server from):
+
+```typescript
+// client.ts
+import {Kmd} from 'algosdk'
+
+// KMD client allows you to export private keys, which is useful to get the default account in a sandbox network
+export function getKmdClient(): Kmd {
+  // We can only use Kmd on the Sandbox otherwise it's not exposed so this makes some assumptions (e.g. same token and server as algod and port 4002)
+  return new Kmd(process.env.ALGOD_TOKEN!, process.env.ALGOD_SERVER!, '4002')
+}
+
+
+```
 
 ## Motivation
 
