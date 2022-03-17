@@ -116,7 +116,7 @@ If you want to use the sandbox then you need to get the private key of the initi
 ./goal.ps1 account export -a {address_from_online_account_from_above_command}
 ```
 
-### Option 2: Autoamtically via kmd API
+### Option 2: Automatically via kmd API
 
 Needing to do this manual step every time you spin up a new development environment or reset your Sandbox is frustrating. Instead, it's useful to have code that uses the Sandbox APIs to automatically retrieve the private key of the default account. The following `getSandboxDefaultAccount` function (in TypeScript, but equivalent will work with algosdk in other languages) will help you achieve that:
 
