@@ -13,8 +13,6 @@ ARG BRANCH="master"
 
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /opt/indexer
-COPY ["fastFollowLoop.patch", "./"]
-RUN patch -p1 < fastFollowLoop.patch
 RUN make
 
 FROM alpine:latest
