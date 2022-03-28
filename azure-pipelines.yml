@@ -13,7 +13,7 @@ pr: none
 
 jobs:
 - job: DockerBuildAndPush
-  timeoutInMinutes: 120
+  timeoutInMinutes: 360
   strategy:
     matrix:
       algod:
