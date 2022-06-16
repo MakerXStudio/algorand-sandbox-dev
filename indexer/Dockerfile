@@ -28,7 +28,8 @@ ARG TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 ENV INDEXER_PORT=${INDEXER_PORT} \
     ALGOD_PORT=${ALGOD_PORT} \
-    ALGOD_TOKEN=${TOKEN}
+    ALGOD_TOKEN=${TOKEN} \
+    INDEXER_ENABLE_ALL_PARAMETERS=true
 
 EXPOSE $INDEXER_PORT
 
