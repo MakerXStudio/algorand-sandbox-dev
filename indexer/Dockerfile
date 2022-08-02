@@ -29,7 +29,10 @@ ARG TOKEN="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 ENV INDEXER_PORT=${INDEXER_PORT} \
     ALGOD_PORT=${ALGOD_PORT} \
     ALGOD_TOKEN=${TOKEN} \
-    INDEXER_ENABLE_ALL_PARAMETERS=true
+    INDEXER_ENABLE_ALL_PARAMETERS=true \
+    INDEXER_DATA=/tmp/indexer-data
+
+RUN mkdir -p ${INDEXER_DATA}
 
 EXPOSE $INDEXER_PORT
 

@@ -10,8 +10,7 @@ RUN apt-get update && apt-get install -y patch libtool libboost-math-dev expect 
 
 # Install algod binaries.
 ARG URL="https://github.com/algorand/go-algorand"
-# TODO: change default back to "rel/stable" once https://github.com/algorand/indexer/issues/1003 is fixed
-ARG BRANCH="v3.6.2-stable"
+ARG BRANCH="rel/stable"
 RUN echo "Installing from source. ${URL} -- ${BRANCH}"
 
 RUN git clone --single-branch --branch "${BRANCH}" "${URL}" /src
