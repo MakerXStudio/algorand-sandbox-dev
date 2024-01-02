@@ -1,5 +1,7 @@
 # algorand-sandbox-dev
 
+This repository is now deprecated in favour of using official Algorand images via [AlgoKit LocalNet](https://github.com/algorandfoundation/algokit-cli/blob/main/docs/features/localnet.md). This repository will be archived.
+
 This repo is loosely based on [Algorand's official sandbox](https://github.com/algorand/sandbox), but solves some performance and experience problems which impact local development and CI/CD usage.
 
 The key problems we resolve are:
